@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "jQuery": "^1.7.4",
     "superagent": "^1.8.3"
   }
 }

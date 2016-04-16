@@ -19,17 +19,18 @@ var getNow = function(){
   var min = toDoubleDigits(now.getMinutes());
   var sec = toDoubleDigits(now.getSeconds());
   date = year+"年"+month+"月"+day+"日"+hour+"時"+min+"分"+sec+"秒";
-  console.log(date);
+  // console.log(date);
+  return date;
 }
 
 var getWeater = function() {
-  console.log('これから天気を取得します');
   return new Promise(function(resolve, reject) {
-    return request.get('http://api.openweathermap.org/data/2.5/weather?q=Tokyo,jp')
+    return request.get('http://api.openweathermap.org/data/2.5/weather?units=metric&q=Tokyo,jp')
                   .accept('application/json')
                   .end(function(err, res) {
-                    console.log(res.body);
-                    resolve()
+                    data = res.body.main.temp;
+                    console.log("現在の気温："+ data);
+                    resolve(data);
                     if (err) {
                       reject(err);
                     }
@@ -37,11 +38,23 @@ var getWeater = function() {
   });
 };
 
+var convertXml = function(data){
+  return"<?xml version=\"1.0\" encoding=\"UTF-8\"\?>\n<records>\n  <group>\n    <datetime>" + data +"</datetime>\n  </group>\n</records>"
+};
+
+var writeFile = function(data){
+  return new Promise(function(resolve, reject) {
+  var xml = convertXml(data);
+  console.log(xml);
+  });
+};
+
 var nowDate = function() {
   setInterval(function() {
     getNow();
-    getWeater().then(function() {
-      console.log('天気情報を取得しました');
+    console.log(date);
+    getWeater().then(function(data) {
+      writeFile(data);
     },function(error) {
       console.log('天気情報の取得に失敗しました')
     });
@@ -50,40 +63,3 @@ var nowDate = function() {
 };
 
 nowDate();
-
-/*
-fetchBus = function() {
-  return new Promise(function(resolve, reject) {
-    return request.get('http://tutujibus.com/busLookup.php?busid=2').accept('application/json').end(function(err, res) {
-      var data;
-      if (err) {
-        reject(err);
-      }
-      data = res.text;
-      data = JSON.parse(data.slice(1, -1));
-      return resolve(data);
-    });
-  });
-};
-
-fetchSomething1(function() {fetchSomething2(function() {fetchSomething3(function() {fetchSomething4(doSomethingFinally); // 全部終わったら doSomethingFinally()
-    });
-  });
-})
-
-
-
-fetchAndUpload = function() {
-  return setInterval(function() {
-    return fetchBus().then(function(data) {
-      return writeFile(data);
-    }).then(function(filepath) {
-      return upload(filepath);
-    }).then(function() {
-      return console.log("done!");
-    })["catch"](function(err) {
-      return console.log("error:", err);
-    });
-  }, 60000);
-};;
-*/
