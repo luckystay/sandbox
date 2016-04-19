@@ -9,7 +9,7 @@ var toDoubleDigits = function(num) {
 };
 
 var getNow = function(){
-  console.log('現在時刻を表示します');
+  console.log('現在時刻を表示');
   var now = new Date();
   var year = now.getYear();
   if ( year < 2000){year += 1900};
@@ -19,13 +19,14 @@ var getNow = function(){
   var min = toDoubleDigits(now.getMinutes());
   var sec = toDoubleDigits(now.getSeconds());
   date = year+"年"+month+"月"+day+"日"+hour+"時"+min+"分"+sec+"秒";
-  // console.log(date);
   return date;
 }
 
 var getWeater = function() {
+  getNow();
+  console.log(date);
   return new Promise(function(resolve, reject) {
-    return request.get('http://api.openweathermap.org/data/2.5/weather?units=metric&q=Tokyo,jp')
+    return request.get('http://api.openweathermap.org/data/2.5/weather?units=metric&q=TokyoTo,jp')
                   .accept('application/json')
                   .end(function(err, res) {
                     data = res.body.main.temp;
@@ -45,14 +46,16 @@ var convertXml = function(data){
 var writeFile = function(data){
   return new Promise(function(resolve, reject) {
   var xml = convertXml(data);
+  if (!data) {
+    reject("not running");
+  }
   console.log(xml);
   });
 };
 
 var nowDate = function() {
   setInterval(function() {
-    getNow();
-    console.log(date);
+    // getNow().then
     getWeater().then(function(data) {
       writeFile(data);
     },function(error) {
