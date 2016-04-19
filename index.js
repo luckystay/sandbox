@@ -29,11 +29,14 @@ var getWeater = function() {
     return request.get('http://api.openweathermap.org/data/2.5/weather?units=metric&q=TokyoTo,jp')
                   .accept('application/json')
                   .end(function(err, res) {
-                    data = res.body.main.temp;
-                    console.log("現在の気温："+ data);
-                    resolve(data);
                     if (err) {
+                      console.log('エラー発生');
                       reject(err);
+                    }
+                    else {
+                      data = res.body.main.temp;
+                      console.log("現在の気温："+ data);
+                      resolve(data);
                     }
                   });
   });
