@@ -1,4 +1,22 @@
 var request = require('superagent');
+var aws = require('aws-sdk');
+aws.config.loadFromPath('./config.json')
+
+
+var getDynamodb = function(){
+  var dynamodb = new aws.DynamoDB();
+  dynamodb.scan({TableName: "yoshi-diapers",Select: "ALL_ATTRIBUTES"},
+    function (err, datas){
+      if (err){
+        console.log(error);
+      }else if(datas == null || datas.Count==0){
+        console.log("no data");
+      }else{
+        console.log(datas);
+        // res.render('index', { title: title, datas: datas, start: start, end: end })
+      }
+    } );
+};
 
 var toDoubleDigits = function(num) {
   num += ""; //Number型をString型に強制変換
@@ -24,6 +42,7 @@ var getNow = function(){
 
 var getWeater = function() {
   getNow();
+  getDynamodb();
   console.log(date);
   return new Promise(function(resolve, reject) {
     return request.get('http://api.openweathermap.org/data/2.5/weather?units=metric&q=TokyoTo,jp&APPID=f3ca9c0b1989fc92f7970cbe2379ce3b')
