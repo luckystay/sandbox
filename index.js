@@ -26,7 +26,7 @@ var getWeater = function() {
   getNow();
   console.log(date);
   return new Promise(function(resolve, reject) {
-    return request.get('http://api.openweathermap.org/data/2.5/weather?units=metric&q=TokyoTo,jp')
+    return request.get('http://api.openweathermap.org/data/2.5/weather?units=metric&q=TokyoTo,jp&APPID=f3ca9c0b1989fc92f7970cbe2379ce3b')
                   .accept('application/json')
                   .end(function(err, res) {
                     if (err) {
